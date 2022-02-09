@@ -26,7 +26,7 @@ def mixture_model_grid(X, y, mixtures,
         class_names = ['CN', 'AD']
     n_x = np.round(np.sqrt(n_biomarkers)).astype(int)
     n_y = np.ceil(np.sqrt(n_biomarkers)).astype(int)
-    fig, ax = plt.subplots(n_y, n_x, figsize=(10, 10))
+    fig, ax = plt.subplots(n_y, n_x, figsize=(20, 20))
     for i in range(n_biomarkers):
         bio_X = X[:, i]
         bio_y = y[~np.isnan(bio_X)]
@@ -40,8 +40,8 @@ def mixture_model_grid(X, y, mixtures,
                                           label=class_names,
                                           density=True,
                                           color=hist_c,
-                                          alpha=0.7,
-                                          stacked=True)
+                                          alpha=0.5,
+                                          stacked=False)
         linspace = np.linspace(bio_X.min(), bio_X.max(), 100).reshape(-1, 1)
         # controls_score, patholog_score = mixtures[i].pdf(linspace)
         controls_score = mixtures[i].cn_comp.pdf(linspace)
@@ -90,19 +90,19 @@ def mcmc_uncert_mat(mcmc_samples, ml_order=None, score_names=None):
     for i in range(n_biomarkers):
         confusion_mat[i, :] = np.sum(all_orders == ml_order[i], axis=0)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(20, 15))
     ax.imshow(confusion_mat, interpolation='nearest', cmap='Greys')
 
     tick_marks = np.arange(n_biomarkers)
 
     ax.set_xticks(tick_marks)
-    ax.set_xticklabels(range(1, n_biomarkers+1), rotation=45)
+    ax.set_xticklabels(range(1, n_biomarkers+1), rotation=90, fontsize=4)
     trimmed_scores = [x[2:].replace('_', ' ') if x.startswith('p_')
                       else x.replace('_', ' ') for x in score_names]
     ax.set_yticks(tick_marks)
     ax.set_yticklabels(np.array(trimmed_scores, dtype='object')[ml_order],
-                       rotation=30, ha='right',
-                       rotation_mode='anchor')
+                       rotation=0, ha='right',
+                       rotation_mode='anchor', fontsize=4)
 
     ax.set_ylabel('Biomarker Name', fontsize=20)
     ax.set_xlabel('Event Order', fontsize=20)
@@ -113,7 +113,7 @@ def mcmc_uncert_mat(mcmc_samples, ml_order=None, score_names=None):
 
 
 def stage_histogram(stages, y, max_stage=None, class_names=None):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(16, 8))
     hist_dat = [stages[y == 0],
                 stages[y == 1]]
     if class_names is None:
@@ -132,7 +132,7 @@ def stage_histogram(stages, y, max_stage=None, class_names=None):
     idxs = np.arange(max_stage+2)
     bin_w = bins[1] - bins[0]
     ax.set_xticks(bins+bin_w/2)
-    ax.set_xticklabels([str(x) for x in idxs])
+    ax.set_xticklabels([str(x) for x in idxs], rotation=90)
 
     ax.set_ylabel('Fraction', fontsize=20)
     ax.set_xlabel('EBM Stage', fontsize=20)
